@@ -1,5 +1,8 @@
 <resources>
-    <string name="app_name">todo</string>
-    <string name="tab_text_1">Tab 1</string>
-    <string name="tab_text_2">Tab 2</string>
+    <string name="app_name">todos</string>
+    <string name="tab_text_1">Active</string>
+    <string name="tab_text_2">Done</string>
+    <string name="add_todo_hint">Enter your todo</string>
+    <string name="add">Add</string>
+    <string name="cancel">Cancel</string>
 </resources>
