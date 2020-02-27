@@ -22,7 +22,7 @@
         </intent-filter>
     </activity>
         <activity
-            android:name=".ui.main.AddDialogFragment"
+            android:name=".ui.main.AddTodoDialog"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateVisible">

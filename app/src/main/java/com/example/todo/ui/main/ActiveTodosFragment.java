@@ -1,19 +1,18 @@
 package com.example.todo.ui.main;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todo.R;
 import com.example.todo.ui.main.dummy.DummyContent;
 import com.example.todo.ui.main.dummy.DummyContent.DummyItem;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 /**
  * A fragment representing a list of Items.
@@ -21,25 +20,26 @@ import com.example.todo.ui.main.dummy.DummyContent.DummyItem;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class ItemFragment extends Fragment {
+public class ActiveTodosFragment extends Fragment implements SchulfachDialogListener {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
+    private RecyclerView.Adapter adapter;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public ItemFragment() {
+    public ActiveTodosFragment() {
     }
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static ItemFragment newInstance(int columnCount) {
-        ItemFragment fragment = new ItemFragment();
+    public static ActiveTodosFragment newInstance(int columnCount) {
+        ActiveTodosFragment fragment = new ActiveTodosFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);
@@ -55,36 +55,35 @@ public class ItemFragment extends Fragment {
         }
     }
 
+    public void showAddDialog() {
+        // Create an instance of the dialog fragment and show it
+        AddTodoDialog dialog = new AddTodoDialog();
+        dialog.setTargetFragment(ActiveTodosFragment.this, 0);
+        dialog.show(requireActivity().getSupportFragmentManager(), "AddTodoDialogFragment");
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_item_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_active_todos, container, false);
 
-        // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+        FloatingActionButton addBtn = view.findViewById(R.id.add_todo_btn);
+
+        addBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showAddDialog();
             }
-            recyclerView.setAdapter(new MyItemRecyclerViewAdapter(DummyContent.getItems(), mListener));
-        }
+        });
+
+        RecyclerView listView = view.findViewById(R.id.list);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+        listView.setLayoutManager(layoutManager);
+        adapter = new ActiveTodosAdapter(DummyContent.getItems(), mListener);
+        listView.setAdapter(adapter);
         return view;
     }
 
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
-        }
-    }
 
     @Override
     public void onDetach() {
@@ -106,4 +105,11 @@ public class ItemFragment extends Fragment {
         // TODO: Update argument type and name
         void onListFragmentInteraction(DummyItem item);
     }
+
+    @Override
+    public void applyTexts(String text) {
+        DummyContent.addItem(DummyContent.createDummyItem(text));
+        adapter.notifyDataSetChanged();
+    }
+
 }
