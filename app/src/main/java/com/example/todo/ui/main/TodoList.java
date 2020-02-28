@@ -1,4 +1,4 @@
-package com.example.todo.ui.main.dummy;
+package com.example.todo.ui.main;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -11,29 +11,36 @@ import java.util.Map;
  * <p>
  * TODO: Replace all uses of this class before publishing your app.
  */
-public class DummyContent {
+public class TodoList {
 
     /**
      * An array of sample (dummy) items.
      */
-    private static List<DummyItem> items = new LinkedList<>();
+    private static List<Todo> items = new LinkedList<>();
 
     /**
      * A map of sample (dummy) items, by ID.
      */
-    public static Map<String, DummyItem> ITEM_MAP = new HashMap<String, DummyItem>();
+    public static Map<String, Todo> ITEM_MAP = new HashMap<String, Todo>();
 
-    public static void addItemAt(DummyItem item, int position) {
+    static {
+        Todo exist = new  Todo("0", "Lee Hee Eun","Hit Lee Hee Eun");
+        items.add(exist);
+        ITEM_MAP.put("0", exist);
+    }
+
+
+    public static void addItemAt(Todo item, int position) {
         items.add(position, item);
         ITEM_MAP.put(String.valueOf(position), item);
     }
 
-    public static void addItem(DummyItem item) {
+    public static void addItem(Todo item) {
         items.add(item);
         ITEM_MAP.put(String.valueOf(items.size()), item);
     }
 
-    public static void removeItem(DummyItem item) {
+    public static void removeItem(Todo item) {
         items.remove(item);
         ITEM_MAP.remove(item.id);
     }
@@ -43,7 +50,7 @@ public class DummyContent {
         ITEM_MAP.remove(String.valueOf(position));
     }
 
-    public static List<DummyItem> getItems() {
+    public static List<Todo> getItems() {
         return items;
     }
 
@@ -52,9 +59,9 @@ public class DummyContent {
     }
 
 
-    public static DummyItem createDummyItem(String todo) {
+    public static Todo createDummyItem(String todo) {
         int position = items.size();
-        return new DummyItem(String.valueOf(position), todo, makeDetails(position));
+        return new Todo(String.valueOf(position), todo, makeDetails(position));
     }
 
     private static String makeDetails(int position) {
@@ -69,15 +76,21 @@ public class DummyContent {
     /**
      * A dummy item representing a piece of content.
      */
-    public static class DummyItem {
+    public static class Todo {
         public final String id;
         public final String content;
         public final String details;
+        public boolean done;
 
-        public DummyItem(String id, String content, String details) {
+        public Todo(String id, String content, String details) {
             this.id = id;
             this.content = content;
             this.details = details;
+            this.done = false;
+        }
+
+        public void setDone(boolean done) {
+            this.done = done;
         }
 
         @Override

@@ -10,8 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todo.R;
-import com.example.todo.ui.main.dummy.DummyContent;
-import com.example.todo.ui.main.dummy.DummyContent.DummyItem;
+import com.example.todo.ui.main.TodoList.Todo;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 /**
@@ -79,7 +78,7 @@ public class ActiveTodosFragment extends Fragment implements SchulfachDialogList
         RecyclerView listView = view.findViewById(R.id.list);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         listView.setLayoutManager(layoutManager);
-        adapter = new ActiveTodosAdapter(DummyContent.getItems(), mListener);
+        adapter = new ActiveTodosAdapter(TodoList.getItems(), mListener);
         listView.setAdapter(adapter);
         return view;
     }
@@ -103,12 +102,12 @@ public class ActiveTodosFragment extends Fragment implements SchulfachDialogList
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteraction(Todo item);
     }
 
     @Override
     public void applyTexts(String text) {
-        DummyContent.addItem(DummyContent.createDummyItem(text));
+        TodoList.addItem(TodoList.createDummyItem(text));
         adapter.notifyDataSetChanged();
     }
 

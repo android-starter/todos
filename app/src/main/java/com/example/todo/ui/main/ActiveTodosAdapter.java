@@ -3,27 +3,28 @@ package com.example.todo.ui.main;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todo.R;
 import com.example.todo.ui.main.ActiveTodosFragment.OnListFragmentInteractionListener;
-import com.example.todo.ui.main.dummy.DummyContent.DummyItem;
+import com.example.todo.ui.main.TodoList.Todo;
 
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
+ * {@link RecyclerView.Adapter} that can display a {@link Todo} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
 public class ActiveTodosAdapter extends RecyclerView.Adapter<ActiveTodosAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
+    private final List<Todo> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public ActiveTodosAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
+    public ActiveTodosAdapter(List<Todo> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -31,15 +32,15 @@ public class ActiveTodosAdapter extends RecyclerView.Adapter<ActiveTodosAdapter.
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_item, parent, false);
+                .inflate(R.layout.fragment_item_todo, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
         holder.mContentView.setText(mValues.get(position).content);
+        holder.mCheckboxView.setChecked(holder.mItem.done);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,15 +61,24 @@ public class ActiveTodosAdapter extends RecyclerView.Adapter<ActiveTodosAdapter.
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
         public final TextView mContentView;
-        public DummyItem mItem;
+        public final CheckBox mCheckboxView;
+        public Todo mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.item_number);
             mContentView = (TextView) view.findViewById(R.id.content);
+            mCheckboxView = (CheckBox) view.findViewById(R.id.checkBox);
+
+            mCheckboxView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mItem.setDone(!mItem.done);
+                    mCheckboxView.setChecked(mItem.done);
+                    ActiveTodosAdapter.this.notifyDataSetChanged();
+                }
+            });
         }
 
         @Override
