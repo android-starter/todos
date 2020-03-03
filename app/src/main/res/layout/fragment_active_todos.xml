@@ -8,6 +8,14 @@
     android:layout_marginLeft="24dp"
     android:layout_marginRight="24dp">
 
+    <TextView
+        android:id="@+id/summary"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:text="summary"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="summary" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_todo_btn"
         android:layout_width="60dp"
@@ -28,11 +36,12 @@
         android:name="com.example.todo.ui.main.ItemFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/add_todo_btn"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0">
 
     </androidx.recyclerview.widget.RecyclerView>

@@ -4,14 +4,18 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todo.R;
-import com.example.todo.ui.main.TodoList.Todo;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.List;
 
 /**
  * A fragment representing a list of Items.
@@ -27,6 +31,7 @@ public class ActiveTodosFragment extends Fragment implements SchulfachDialogList
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
     private RecyclerView.Adapter adapter;
+    private TodosViewModel todosVM;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -75,11 +80,31 @@ public class ActiveTodosFragment extends Fragment implements SchulfachDialogList
             }
         });
 
-        RecyclerView listView = view.findViewById(R.id.list);
+        todosVM = new ViewModelProvider(this).get(TodosViewModel.class);
+
+        final RecyclerView listView = view.findViewById(R.id.list);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         listView.setLayoutManager(layoutManager);
-        adapter = new ActiveTodosAdapter(TodoList.getItems(), mListener);
+        adapter = new ActiveTodosAdapter(null, mListener, todosVM);
         listView.setAdapter(adapter);
+
+        todosVM.getTodos().observe(getViewLifecycleOwner(), new Observer<List<Todo>>() {
+            @Override
+            public void onChanged(List<Todo> todos) {
+                listView.swapAdapter(new ActiveTodosAdapter(todos, mListener, todosVM), false);
+            }
+        });
+
+        final TextView summaryView = view.findViewById(R.id.summary);
+
+        todosVM.getCompletedTodos().observe(getViewLifecycleOwner(), new Observer<List<Todo>>() {
+            @Override
+            public void onChanged(List<Todo> todos) {
+                summaryView.setText(String.format("%d completed", todos.size()));
+            }
+        });
+
+
         return view;
     }
 
@@ -107,8 +132,7 @@ public class ActiveTodosFragment extends Fragment implements SchulfachDialogList
 
     @Override
     public void applyTexts(String text) {
-        TodoList.addItem(TodoList.createDummyItem(text));
-        adapter.notifyDataSetChanged();
+        todosVM.addTodo(text);
     }
 
 }
