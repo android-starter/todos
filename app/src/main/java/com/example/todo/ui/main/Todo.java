@@ -12,7 +12,6 @@ public class Todo {
 
     public void setDone(boolean done) {
         this.done = done;
-        this.content = this.content + ".";
     }
 
     public void setId(int id) {

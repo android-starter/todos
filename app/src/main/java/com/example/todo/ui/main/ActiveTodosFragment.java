@@ -25,10 +25,6 @@ import java.util.List;
  */
 public class ActiveTodosFragment extends Fragment implements SchulfachDialogListener {
 
-    // TODO: Customize parameter argument names
-    private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
-    private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
     private RecyclerView.Adapter adapter;
     private TodosViewModel todosVM;
@@ -40,23 +36,9 @@ public class ActiveTodosFragment extends Fragment implements SchulfachDialogList
     public ActiveTodosFragment() {
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
-    public static ActiveTodosFragment newInstance(int columnCount) {
-        ActiveTodosFragment fragment = new ActiveTodosFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-        }
     }
 
     public void showAddDialog() {
@@ -88,22 +70,15 @@ public class ActiveTodosFragment extends Fragment implements SchulfachDialogList
         adapter = new ActiveTodosAdapter(null, mListener, todosVM);
         listView.setAdapter(adapter);
 
+        final TextView summaryView = view.findViewById(R.id.summary);
+
         todosVM.getTodos().observe(getViewLifecycleOwner(), new Observer<List<Todo>>() {
             @Override
             public void onChanged(List<Todo> todos) {
                 listView.swapAdapter(new ActiveTodosAdapter(todos, mListener, todosVM), false);
+                summaryView.setText(String.format("%d completed, %d left", todosVM.selectCompleted().size(), todosVM.selectIncomplete().size()));
             }
         });
-
-        final TextView summaryView = view.findViewById(R.id.summary);
-
-        todosVM.getCompletedTodos().observe(getViewLifecycleOwner(), new Observer<List<Todo>>() {
-            @Override
-            public void onChanged(List<Todo> todos) {
-                summaryView.setText(String.format("%d completed", todos.size()));
-            }
-        });
-
 
         return view;
     }

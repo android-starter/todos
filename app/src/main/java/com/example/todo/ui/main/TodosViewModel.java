@@ -9,59 +9,75 @@ import java.util.Iterator;
 import java.util.List;
 
 public class TodosViewModel extends ViewModel {
-    public MutableLiveData<List<Todo>> todos ;
+    public MutableLiveData<List<Todo>> todos;
+    public MutableLiveData<List<Todo>> completedTodos;
+    public MutableLiveData<List<Todo>> incompleteTodos;
+
+    public TodosViewModel() {
+        List<Todo> initial = new ArrayList<>();
+        initial.add(new Todo("Lee Hee Eun"));
+        todos = new MutableLiveData<List<Todo>>(initial);
+        completedTodos = new MutableLiveData<>(selectCompleted());
+        incompleteTodos = new MutableLiveData<>(selectIncomplete());
+    }
+
 
     public LiveData<List<Todo>> getTodos() {
-        if (todos == null) {
-            todos = new MutableLiveData<List<Todo>>();
-            loadTodos();
-        }
-
         return todos;
     }
 
     public LiveData<List<Todo>> getCompletedTodos() {
+        return completedTodos;
+    }
 
+    public LiveData<List<Todo>> getIncompleteTodos() {
+        return incompleteTodos;
+    }
+
+    private void update(List<Todo> next) {
+        todos.setValue(next);
+        completedTodos.setValue(selectCompleted());
+        incompleteTodos.setValue(selectIncomplete());
+    }
+
+    public List<Todo> selectCompleted() {
         List<Todo> all = todos.getValue();
-        List<Todo> sub = new ArrayList<Todo>();
-
-        if (all != null) {
-
-            Iterator<Todo> it = all.iterator();
-
-            while(it.hasNext()) {
-                Todo t = it.next();
-                if (t.done) {
-                    sub.add(t);
-                }
+        Iterator<Todo> it = all.iterator();
+        List<Todo> completed = new ArrayList<Todo>();
+        while (it.hasNext()) {
+            Todo t = it.next();
+            if (t.done) {
+                completed.add(t);
             }
         }
-
-        return new MutableLiveData<List<Todo>>(sub);
+        return completed;
     }
 
-    private void loadTodos() {
-        // Do an asynchronous operation to fetch todos.
-        List<Todo> initial = new ArrayList<>();
-        initial.add(new Todo("Lee Hee Eun"));
-        todos.setValue(initial);
+    public List<Todo> selectIncomplete() {
+        List<Todo> all = todos.getValue();
+        Iterator<Todo> it = all.iterator();
+        List<Todo> completed = new ArrayList<Todo>();
+        while (it.hasNext()) {
+            Todo t = it.next();
+            if (!t.done) {
+                completed.add(t);
+            }
+        }
+        return completed;
     }
+
 
     public void addTodo(Todo todo) {
-        if (todos == null) {
-            todos = new MutableLiveData<List<Todo>>();
-            loadTodos();
-        }
         List<Todo> exists = todos.getValue();
         exists.add(todo);
-        todos.setValue(exists);
+        update(exists);
     }
 
     public void addTodo(String content) {
         Todo todo = new Todo(content);
         List<Todo> exists = todos.getValue();
         exists.add(todo);
-        todos.setValue(exists);
+        update(exists);
     }
 
     public Todo getTodo(int index) {
@@ -73,12 +89,23 @@ public class TodosViewModel extends ViewModel {
         List<Todo> exists = todos.getValue();
         if (exists.get(index) != null) {
             exists.set(index, todo);
-            todos.setValue(exists);
-            System.out.println("Set item done successfully");
+            update(exists);
             return true;
         }
 
         return false;
     }
+
+    public boolean removeTodo(int index) {
+        List<Todo> exists = todos.getValue();
+        if (exists.get(index) != null) {
+            exists.remove(index);
+            update(exists);
+            return true;
+        }
+
+        return false;
+    }
+
 
 }
